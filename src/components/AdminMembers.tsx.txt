@@ -1,0 +1,329 @@
+import React, { useState, useEffect } from 'react';
+import { Search, Plus, Edit, Trash2, ShieldCheck, X, Printer } from 'lucide-react';
+
+// --- LISTA COMPLETA DOS 85 MEMBROS (Baseada no Rol Oficial) ---
+const DADOS_INICIAIS = [
+  { id: 1, nome: "Adeílda Gomes de Oliveira", celular: "74 99963-6488", status: "Comungante", oficio: "Não oficial" },
+  { id: 2, nome: "Adevaldo Marques Rios", celular: "74 9979-5490", status: "Comungante", oficio: "Presbítero" },
+  { id: 3, nome: "Adonel Oliveira", celular: "Não informado", status: "Comungante", oficio: "Diácono" },
+  { id: 4, nome: "Agnaldo de Sá", celular: "Não informado", status: "Não Comungante", oficio: "Não oficial" },
+  { id: 5, nome: "Alzerita Santos de Souza", celular: "74 99956-6871", status: "Comungante", oficio: "Não oficial" },
+  { id: 6, nome: "Anderson Hangel Souza Franco", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 7, nome: "Antônio jacinto Filho Do Nascimento", celular: "74 99986-7018", status: "Comungante", oficio: "Diácono" },
+  { id: 8, nome: "Antonio ferreira da silva", celular: "74 99964-6651", status: "Comungante", oficio: "Não oficial" },
+  { id: 9, nome: "Antonio Rios dos Santos", celular: "Não informado", status: "Comungante", oficio: "Diácono" },
+  { id: 10, nome: "Arnobio Lopes da Silva", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 11, nome: "Benigno Senhorinho de Jesus", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 12, nome: "Berenalva Souza Rios Nascimento", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 13, nome: "Bereni Lopes Rios", celular: "74 99908-1604", status: "Comungante", oficio: "Não oficial" },
+  { id: 14, nome: "Berenice Maria da Silva Lopes", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 15, nome: "Bernadet Araújo da Silva", celular: "74 9946-2612", status: "Comungante", oficio: "Não oficial" },
+  { id: 16, nome: "Carlito Oliveira Cunha", celular: "74 99911-354X", status: "Comungante", oficio: "Presbítero em disponibilidade" },
+  { id: 17, nome: "Dalva Cerqueira Silva Matos", celular: "74 99919-8603", status: "Comungante", oficio: "Não oficial" },
+  { id: 18, nome: "Daniel Oliveira Santos", celular: "Não informado", status: "Não Comungante", oficio: "Não oficial" },
+  { id: 19, nome: "Debura Rios Ribeiro", celular: "74 99946-4400", status: "Comungante", oficio: "Não oficial" },
+  { id: 20, nome: "Diana Rios Alves Fagundes", celular: "74 99967-9797", status: "Comungante", oficio: "Não oficial" },
+  { id: 21, nome: "Edelice Lopes da Silva", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 22, nome: "Edivaldo Emídio Santos", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 23, nome: "Elida Suzart Lima", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 24, nome: "Elique Rios Filho", celular: "74 99991-0068", status: "Comungante", oficio: "Presbítero" },
+  { id: 25, nome: "Elisa Silva Silva Sena", celular: "74 99949-8421", status: "Não Comungante", oficio: "Não oficial" },
+  { id: 26, nome: "Elizania Gonçalves da Silva rios", celular: "74 99979-5490", status: "Comungante", oficio: "Não oficial" },
+  { id: 27, nome: "Eritom Marques Rios", celular: "Não informado", status: "Não Comungante", oficio: "Não oficial" },
+  { id: 28, nome: "Euflorsina da Cunha Oliveira", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 29, nome: "Evangelina de Oliveira Santos", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 30, nome: "Evanuzia Santos dos Reis", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 31, nome: "Fabiana de Carvalho Barbosa", celular: "74 98144-4303", status: "Comungante", oficio: "Não oficial" },
+  { id: 32, nome: "Gehanne de Matos Rios", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 33, nome: "Gildete Souza Rios", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 34, nome: "Guilherina Barbosa Costa", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 35, nome: "HELOISA BARBOSA DA SILVA", celular: "Não informado", status: "Não Comungante", oficio: "Não oficial" },
+  { id: 36, nome: "Iara Silva Sena", celular: "74 99997-4632", status: "Não Membro", oficio: "Não oficial" },
+  { id: 37, nome: "Imarcélia Lima Rios", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 38, nome: "Irada Rios de Abreu", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 39, nome: "Iradi Maria de Matos Rios", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 40, nome: "Irandir da Silva Rios", celular: "74 99913-9959", status: "Comungante", oficio: "Não oficial" },
+  { id: 41, nome: "Ivoneide Sousa Rios Oliveira", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 42, nome: "Izabel Rios Oliveira", celular: "74 99819-0934", status: "Comungante", oficio: "Não oficial" },
+  { id: 43, nome: "Izabela Mota de Souza Cunha", celular: "74 9999-7747", status: "Comungante", oficio: "Não oficial" },
+  { id: 44, nome: "Joelma Cristina Rios Lima Pinho", celular: "74 99958-5052", status: "Comungante", oficio: "Não oficial" },
+  { id: 45, nome: "Jonatas Rios Guilherme", celular: "74 99955-1293", status: "Comungante", oficio: "Não oficial" },
+  { id: 46, nome: "José Carlos Brasileiro Sena", celular: "74 99924-4119", status: "Não Membro", oficio: "Não oficial" },
+  { id: 47, nome: "José de Oliveira Cunha", celular: "Não informado", status: "Comungante", oficio: "Presbítero em disponibilidade" },
+  { id: 48, nome: "José dos Santos Oliveira", celular: "(74) 99811-9515", status: "Comungante", oficio: "Não oficial" },
+  { id: 49, nome: "Joseane da Silva Souza", celular: "74 99964-2376", status: "Comungante", oficio: "Não oficial" },
+  { id: 50, nome: "Jucielle da Silva Cunha Santos", celular: "(74) 99915-6401", status: "Comungante", oficio: "Não oficial" },
+  { id: 51, nome: "Jucineide Rios Oliveira", celular: "74 99808-7226", status: "Comungante", oficio: "Não oficial" },
+  { id: 52, nome: "Jucirene Lopes da Silva cunha", celular: "74 9967-5053", status: "Comungante", oficio: "Não oficial" },
+  { id: 53, nome: "Leonildio Ferreira dos Santos", celular: "74 99970-1358", status: "Comungante", oficio: "Não oficial" },
+  { id: 54, nome: "LEVI RIOS ALVES FAGUNDES", celular: "74 99867-3305", status: "Comungante", oficio: "Não oficial" },
+  { id: 55, nome: "Luana Lima Mendes Oliveira", celular: "74 99985-9324", status: "Comungante", oficio: "Não oficial" },
+  { id: 56, nome: "Lucineide Oliveira Nascimento", celular: "74 99954-4521", status: "Comungante", oficio: "Não oficial" },
+  { id: 57, nome: "Maria Betina Cunha Franco", celular: "Não informado", status: "Não Comungante", oficio: "Não oficial" },
+  { id: 58, nome: "Maria Cecília Cunha Franco", celular: "Não informado", status: "Não Comungante", oficio: "Não oficial" },
+  { id: 59, nome: "Marilene Gonçalves da Silva", celular: "74 99964-1431", status: "Comungante", oficio: "Não oficial" },
+  { id: 60, nome: "Matheus Almeida Evangelista", celular: "(74) 99942-9016", status: "Não Comungante", oficio: "Não oficial" },
+  { id: 61, nome: "Meire da Silva Almeida Evangelista", celular: "74 9930-3935", status: "Comungante", oficio: "Não oficial" },
+  { id: 62, nome: "Milton Pereira Rios", celular: "74 99919-4112", status: "Comungante", oficio: "Não oficial" },
+  { id: 63, nome: "Naudja Sousa Rios Theodoro", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 64, nome: "Oseas da Silva Cunha", celular: "74 99914-9304", status: "Comungante", oficio: "Não oficial" },
+  { id: 65, nome: "Osmária Sousa Rios", celular: "74 9813-2159", status: "Comungante", oficio: "Não oficial" },
+  { id: 66, nome: "Otoniel DA Silva Cunha", celular: "74 99819-2191", status: "Comungante", oficio: "Não oficial" },
+  { id: 67, nome: "Otoniel de Souza Rios", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 68, nome: "Ozenilde Sousa Rios", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 69, nome: "Ozileia da silva Cunha Ferreira", celular: "74 99980-2611", status: "Comungante", oficio: "Não oficial" },
+  { id: 70, nome: "Ozuel da Silva cunha", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 71, nome: "Patrícia Lopes Rios Cunha", celular: "74 9817-1902", status: "Comungante", oficio: "Não oficial" },
+  { id: 72, nome: "Paulo Sérgio Vieira dos Santos", celular: "Não informado", status: "Comungante", oficio: "Não oficial" },
+  { id: 73, nome: "Pedro Leonel da Cunha Ferreira", celular: "Não informado", status: "Não Comungante", oficio: "Não oficial" },
+  { id: 74, nome: "Ridair da Cunha Santos", celular: "74 99970-1358", status: "Comungante", oficio: "Não oficial" },
+  { id: 75, nome: "Roberio Araújo Evangelista", celular: "(74) 99942-9016", status: "Comungante", oficio: "Presbítero em disponibilidade" },
+  { id: 76, nome: "Sidelcina da Cunha Oliveira", celular: "74 99901-4329", status: "Comungante", oficio: "Não oficial" },
+  { id: 77, nome: "Suelivania Santos da Silva Sena", celular: "74 99976-3212", status: "Comungante", oficio: "Não oficial" },
+  { id: 78, nome: "Thayz Mota Cunha Franco", celular: "74 99938-6757", status: "Comungante", oficio: "Não oficial" },
+  { id: 79, nome: "Uriel da Silva cunha", celular: "74 9937-3626", status: "Comungante", oficio: "Não oficial" },
+  { id: 80, nome: "Vitor Manoel da Cunha Ferreira", celular: "Não informado", status: "Não Comungante", oficio: "Não oficial" },
+  { id: 81, nome: "Wélida Ticiana almeida Araújo Rios", celular: "74 99964-2782", status: "Comungante", oficio: "Não oficial" },
+  { id: 82, nome: "YASMIM BARBOSA SILVA", celular: "Não informado", status: "Não Comungante", oficio: "Não oficial" },
+  { id: 83, nome: "ZACK SAMUEL BARBOSA SILVA", celular: "Não informado", status: "Não Comungante", oficio: "Não oficial" },
+  { id: 84, nome: "Zailde Rios Santos", celular: "74 99980-8547", status: "Comungante", oficio: "Não oficial" },
+  { id: 85, nome: "Zenilda Maria da Silva Cunha", celular: "Não informado", status: "Comungante", oficio: "Não oficial" }
+];
+
+export default function AdminMembers() {
+  const [senha, setSenha] = useState('');
+  const [logado, setLogado] = useState(false);
+  
+  // O "v2" aqui reseta a memória do navegador e força ele a ler a lista nova
+  const [membros, setMembros] = useState(() => {
+    const salvos = localStorage.getItem('ipvp_membros_v2');
+    if (salvos) return JSON.parse(salvos);
+    return DADOS_INICIAIS;
+  });
+  
+  const [filtro, setFiltro] = useState('Todos');
+  const [busca, setBusca] = useState('');
+
+  const [modalAberto, setModalAberto] = useState(false);
+  const [membroEditando, setMembroEditando] = useState<any>(null);
+  const [form, setForm] = useState({ nome: '', celular: '', status: 'Comungante', oficio: 'Não oficial' });
+
+  useEffect(() => {
+    localStorage.setItem('ipvp_membros_v2', JSON.stringify(membros));
+  }, [membros]);
+
+  const abrirModal = (membro = null) => {
+    if (membro) {
+      setMembroEditando(membro);
+      setForm(membro);
+    } else {
+      setMembroEditando(null);
+      setForm({ nome: '', celular: '', status: 'Comungante', oficio: 'Não oficial' });
+    }
+    setModalAberto(true);
+  };
+
+  const salvarMembro = () => {
+    if (!form.nome) return alert('O nome é obrigatório!');
+    if (membroEditando) {
+      setMembros(membros.map(m => m.id === membroEditando.id ? { ...form, id: m.id } : m));
+    } else {
+      setMembros([...membros, { ...form, id: Date.now() }]);
+    }
+    setModalAberto(false);
+  };
+
+  const excluirMembro = (id: number) => {
+    if (window.confirm("Tem certeza que deseja excluir este irmão(ã)?")) {
+      setMembros(membros.filter(m => m.id !== id));
+    }
+  };
+
+// ... O restante do arquivo (da linha 'if (!logado) {' para baixo) continua exatamente igual
+
+  if (!logado) {
+    return (
+      <div className="text-center py-24 bg-white rounded-3xl shadow-2xl border border-slate-100 max-w-xl mx-auto mt-10">
+        <ShieldCheck size={64} className="mx-auto mb-6 text-[#D4B36D]" />
+        <h2 className="text-3xl font-serif font-bold text-slate-900 mb-2">Acesso Restrito</h2>
+        <p className="text-slate-500 mb-10 uppercase tracking-widest text-sm">Apenas Liderança IPVP</p>
+        
+        <input 
+          type="password" 
+          placeholder="Digite a Senha" 
+          className="border-2 border-slate-200 p-4 rounded-xl outline-none focus:border-[#D4B36D] mr-2 text-center text-lg font-bold w-64"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+        />
+        <button 
+          onClick={() => { if(senha === '2933') setLogado(true); else alert('Senha incorreta!'); }}
+          className="bg-[#0f172a] text-white px-8 py-4 rounded-xl font-bold uppercase tracking-widest hover:bg-[#D4B36D] transition-colors mt-4 md:mt-0"
+        >
+          Entrar
+        </button>
+      </div>
+    );
+  }
+
+  // Filtros aplicados
+  const membrosFiltrados = membros.filter(m => {
+    const matchBusca = m.nome.toLowerCase().includes(busca.toLowerCase());
+    const matchStatus = filtro === 'Todos' || m.status === filtro;
+    return matchBusca && matchStatus;
+  });
+
+  return (
+    <>
+      {/* CÓDIGO CSS INJETADO PARA IMPRESSÃO PERFEITA */}
+      <style>
+        {`
+          @media print {
+            body * { visibility: hidden; }
+            #area-impressao, #area-impressao * { visibility: visible; }
+            #area-impressao { position: absolute; left: 0; top: 0; width: 100%; }
+            .nao-imprime { display: none !important; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #ddd !important; padding: 8px !important; color: black !important; }
+            th { background-color: #f1f1f1 !important; -webkit-print-color-adjust: exact; }
+          }
+        `}
+      </style>
+
+      <div id="area-impressao" className="py-10 bg-white rounded-3xl shadow-2xl border border-slate-100 p-6 md:p-10 mt-10 animate-in fade-in zoom-in duration-500 min-h-[80vh] relative">
+        
+        {/* Cabeçalho que só aparece na folha de impressão */}
+        <div className="hidden print:block mb-8 text-center">
+          <h1 className="text-3xl font-serif font-bold text-black uppercase">Igreja Presbiteriana em Várzea do Poço</h1>
+          <h2 className="text-xl text-black mt-2 font-bold">Relatório de Membros ({filtro})</h2>
+          <p className="text-black mt-1">Total listado: {membrosFiltrados.length} membros</p>
+        </div>
+
+        {/* Cabeçalho do Sistema (Não imprime) */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-slate-100 pb-6 gap-4 nao-imprime">
+          <h2 className="text-3xl font-serif font-bold text-[#163328]">Rol de Membros</h2>
+          <div className="flex gap-2">
+            <button onClick={() => window.print()} className="bg-[#D4B36D] text-slate-900 px-6 py-3 rounded-xl font-bold uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-colors flex items-center gap-2 shadow-lg">
+              <Printer size={18} /> Imprimir
+            </button>
+            <button onClick={() => abrirModal()} className="bg-[#163328] text-white px-6 py-3 rounded-xl font-bold uppercase tracking-widest hover:bg-slate-800 flex items-center gap-2 shadow-lg">
+              <Plus size={18}/> Cadastrar
+            </button>
+          </div>
+        </div>
+
+        {/* Controles de Filtro e Busca (Não imprime) */}
+        <div className="flex flex-col md:flex-row gap-4 mb-8 nao-imprime">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#D4B36D]" size={20} />
+            <input 
+              type="text" 
+              placeholder="Buscar irmão por nome..." 
+              className="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-xl outline-none focus:border-[#D4B36D] font-medium text-slate-700 bg-slate-50 focus:bg-white transition-colors"
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+            />
+          </div>
+          <select 
+            className="border-2 border-slate-200 px-6 py-3 rounded-xl outline-none focus:border-[#D4B36D] font-bold text-slate-700 bg-slate-50 uppercase tracking-widest text-xs cursor-pointer"
+            value={filtro}
+            onChange={(e) => setFiltro(e.target.value)}
+          >
+            <option value="Todos">Todos (Comung. e Não Comung.)</option>
+            <option value="Comungante">Apenas Comungantes</option>
+            <option value="Não Comungante">Apenas Não Comungantes</option>
+          </select>
+        </div>
+
+        {/* Tabela de Dados */}
+        <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-[#0f172a] text-white uppercase tracking-widest text-[10px] md:text-xs">
+                <th className="p-4 md:p-5 font-bold">Nome do Membro</th>
+                <th className="p-4 md:p-5 font-bold">Celular</th>
+                <th className="p-4 md:p-5 font-bold">Status</th>
+                <th className="p-4 md:p-5 font-bold">Ofício</th>
+                <th className="p-4 md:p-5 font-bold text-right nao-imprime">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {membrosFiltrados.map((m) => (
+                <tr key={m.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                  <td className="p-4 md:p-5 font-bold text-slate-800">{m.nome}</td>
+                  <td className="p-4 md:p-5 text-slate-600 font-medium">{m.celular}</td>
+                  <td className="p-4 md:p-5 font-bold">
+                    <span className={m.status === 'Comungante' ? 'text-green-700' : 'text-amber-600'}>
+                      {m.status}
+                    </span>
+                  </td>
+                  <td className="p-4 md:p-5 text-slate-600 font-medium">{m.oficio}</td>
+                  <td className="p-4 md:p-5 text-right nao-imprime">
+                    <button onClick={() => abrirModal(m)} className="text-slate-400 hover:text-blue-600 p-2"><Edit size={18}/></button>
+                    <button onClick={() => excluirMembro(m.id)} className="text-slate-400 hover:text-red-600 p-2"><Trash2 size={18}/></button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        
+        {/* Rodapé da tabela com a contagem total */}
+        <div className="mt-4 text-slate-500 font-bold uppercase tracking-widest text-xs text-right nao-imprime">
+          Total listado: {membrosFiltrados.length} membros
+        </div>
+
+        {/* MODAL DE CADASTRO/EDIÇÃO (Flutuante) */}
+        <AnimatePresence>
+          {modalAberto && (
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 nao-imprime">
+              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="bg-white rounded-[2rem] p-8 w-full max-w-lg shadow-2xl relative">
+                <button onClick={() => setModalAberto(false)} className="absolute top-6 right-6 text-slate-400 hover:text-red-500"><X size={24}/></button>
+                
+                <h3 className="text-2xl font-serif font-bold text-[#163328] mb-6">
+                  {membroEditando ? 'Atualizar Membro' : 'Novo Membro'}
+                </h3>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-1">Nome Completo</label>
+                    <input type="text" className="w-full p-4 border-2 border-slate-200 rounded-xl outline-none focus:border-[#D4B36D] font-bold text-slate-800" value={form.nome} onChange={(e) => setForm({...form, nome: e.target.value})} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-1">Celular</label>
+                    <input type="text" placeholder="(74) 99999-9999" className="w-full p-4 border-2 border-slate-200 rounded-xl outline-none focus:border-[#D4B36D] font-bold text-slate-800" value={form.celular} onChange={(e) => setForm({...form, celular: e.target.value})} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-1">Status</label>
+                      <select className="w-full p-4 border-2 border-slate-200 rounded-xl outline-none focus:border-[#D4B36D] font-bold text-slate-800" value={form.status} onChange={(e) => setForm({...form, status: e.target.value})}>
+                        <option>Comungante</option>
+                        <option>Não Comungante</option>
+                        <option>Não Membro</option>
+                        <option>Em Disciplina</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-1">Ofício</label>
+                      <select className="w-full p-4 border-2 border-slate-200 rounded-xl outline-none focus:border-[#D4B36D] font-bold text-slate-800" value={form.oficio} onChange={(e) => setForm({...form, oficio: e.target.value})}>
+                        <option>Não oficial</option>
+                        <option>Diácono</option>
+                        <option>Presbítero</option>
+                        <option>Presbítero em disponibilidade</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8 flex gap-4">
+                  <button onClick={() => setModalAberto(false)} className="flex-1 py-4 rounded-xl font-bold uppercase tracking-widest bg-slate-100 text-slate-600 hover:bg-slate-200">Cancelar</button>
+                  <button onClick={salvarMembro} className="flex-1 py-4 rounded-xl font-bold uppercase tracking-widest bg-[#163328] text-white hover:bg-[#D4B36D] hover:text-slate-900 transition-colors">Salvar</button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+      </div>
+    </>
+  );
+}
